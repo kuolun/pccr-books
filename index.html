@@ -695,35 +695,7 @@ document.getElementById('promptDismissBtn').addEventListener('click',()=>{docume
 document.getElementById('loginBtn')?.addEventListener('click',loginWithGoogle);
 
 render();
-
-// Debug panel
-const _dbg=document.createElement('div');
-_dbg.id='dbgPanel';
-_dbg.style.cssText='position:fixed;bottom:0;left:0;right:0;background:#222;color:#0f0;font:12px monospace;padding:8px;max-height:150px;overflow:auto;z-index:9999';
-_dbg.innerHTML='[debug] ready | key='+SUPABASE_ANON_KEY.substring(0,20)+'...';
-document.body.appendChild(_dbg);
-function dbg(msg){_dbg.innerHTML+='<br>['+new Date().toLocaleTimeString()+'] '+msg;_dbg.scrollTop=_dbg.scrollHeight;}
-
-// Patch: monitor auth
-const _origAuth=sb.auth.onAuthStateChange;
-sb.auth.onAuthStateChange((ev,ses)=>{
-  dbg('auth: event='+ev+' user='+(ses?.user?.email||'null'));
-});
-
-// Patch: monitor star clicks
-bookList.addEventListener('click',(e)=>{
-  const star=e.target.closest('.fav-star');
-  if(star) dbg('star clicked: name='+star.dataset.favName+' src='+star.dataset.favSource+' user='+(currentUser?.email||'null')+' toggling='+_toggling);
-  const btn=e.target.closest('.status-btn');
-  if(btn) dbg('status btn: '+btn.dataset.st);
-},true); // capture phase
-
-// Patch: monitor logout
-document.addEventListener('click',(e)=>{
-  if(e.target.closest('#logoutBtn')) dbg('logout clicked');
-  if(e.target.closest('#loginBtn')) dbg('login clicked');
-  if(e.target.closest('.fav-star')) dbg('star capture phase');
-},true);
+function dbg(msg){console.log('[pccr]',msg);}
 </script>
 </body>
 </html>

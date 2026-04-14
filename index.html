@@ -602,26 +602,16 @@ async function updateFavStatus(bookName,source,newStatus){
 }
 
 sb.auth.onAuthStateChange(async(event,session)=>{
-  try{
-    console.log('auth event:',event,'user:',!!session?.user);
-    currentUser=session?.user||null;
-    updateAuthUI();
-    if(currentUser){
-      await loadFavorites();
-      console.log('favorites loaded:',favCache.size);
-    }
+  console.log('auth event:',event,'user:',!!session?.user);
+  currentUser=session?.user||null;
+  updateAuthUI();
+  updateFavTab();
+  render();
+  if(currentUser){
+    try{await loadFavorites();}catch(e){console.error('loadFavorites failed:',e);}
+    console.log('favorites loaded:',favCache.size);
     updateFavTab();
     render();
-  }catch(e){console.error('onAuthStateChange error:',e);}
-});
-
-// Also check session on page load
-sb.auth.getSession().then(({data:{session}})=>{
-  if(session?.user&&!currentUser){
-    console.log('getSession found user, updating...');
-    currentUser=session.user;
-    updateAuthUI();
-    loadFavorites().then(()=>{updateFavTab();render();});
   }
 });
 

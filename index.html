@@ -90,6 +90,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans
 .login-prompt .google-btn{display:inline-flex;align-items:center;gap:0.5rem;background:#fff;border:2px solid #ddd;border-radius:8px;padding:0.6rem 1.2rem;font-size:0.95rem;cursor:pointer;font-weight:600;color:#333;transition:border-color 0.15s}
 .login-prompt .google-btn:hover{border-color:#4285f4}
 .login-prompt .dismiss-btn{display:block;margin-top:0.8rem;color:#999;font-size:0.8rem;cursor:pointer;background:none;border:none}
+.book-card{position:relative}
+.fav-star{position:absolute;top:0.5rem;right:0.5rem;font-size:1.3rem;cursor:pointer;color:#ccc;transition:color 0.15s;background:none;border:none;padding:0.2rem;line-height:1}
+.fav-star:hover{color:#d4a853}
+.fav-star.active{color:#d4a853}
+.tag-want{background:#e3f2fd;color:#1565c0}
+.tag-owned{background:#fff3e0;color:#e65100}
+.tag-done{background:#e8f5e9;color:#2e7d32}
+.status-btns{display:flex;gap:0.3rem;margin-top:0.4rem}
+.status-btn{padding:0.2rem 0.5rem;border-radius:4px;font-size:0.72rem;cursor:pointer;border:1px solid #ddd;background:#fff;transition:all 0.15s}
+.status-btn:hover{border-color:#d4a853}
+.status-btn.current{font-weight:700;border-color:currentColor}
 @media(max-width:600px){
   .header h1{font-size:1.4rem}
   .book-list{grid-template-columns:1fr}
@@ -115,6 +126,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans
 <div class="source-tabs">
   <button class="source-tab active" data-source="pccr">教育部好書 <span class="tab-count">848</span></button>
   <button class="source-tab" data-source="threads">社群推薦 <span class="tab-count">84</span></button>
+  <button class="source-tab" data-source="favorites" id="favTab" style="display:none">我的收藏 <span class="tab-count">0</span></button>
 </div>
 
 <div class="container">
@@ -210,6 +222,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans
         </select>
       </div>
     </div>
+    <div class="filters" id="favFilters" style="display:none">
+      <div class="filter-group">
+        <label>閱讀狀態</label>
+        <div class="filter-pills" id="favStatusFilter">
+          <span class="pill active" data-val="">全部</span>
+          <span class="pill" data-val="want">想看</span>
+          <span class="pill" data-val="owned">已入手</span>
+          <span class="pill" data-val="done">讀完</span>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="stats">
@@ -267,7 +290,7 @@ const threadsFiltersEl=document.getElementById('threadsFilters');
 let currentSource='pccr';
 function getActiveBooks(){return currentSource==='threads'?THREADS_BOOKS:BOOKS}
 
-let filters={search:'',age:'',year:'',cat:'',origin:'',classic:false};
+let filters={search:'',age:'',year:'',cat:'',origin:'',classic:false,favStatus:''};
 
 function setupPills(containerId,filterKey){
   const container=document.getElementById(containerId);
@@ -290,6 +313,7 @@ setupPills('ageFilter','age');
 setupPills('originFilter','origin');
 setupPills('classicFilter','classic');
 setupPills('threadsAgeFilter','age');
+setupPills('favStatusFilter','favStatus');
 
 searchBox.addEventListener('input',()=>{filters.search=searchBox.value.trim().toLowerCase();render()});
 yearFilter.addEventListener('change',()=>{filters.year=yearFilter.value;render()});
@@ -297,7 +321,7 @@ catFilter.addEventListener('change',()=>{filters.cat=catFilter.value;render()});
 threadsCatFilter.addEventListener('change',()=>{filters.cat=threadsCatFilter.value;render()});
 
 function resetFilters(){
-  filters={search:'',age:'',year:'',cat:'',origin:'',classic:false};
+  filters={search:'',age:'',year:'',cat:'',origin:'',classic:false,favStatus:''};
   searchBox.value='';
   yearFilter.value='';
   catFilter.value='';
@@ -318,9 +342,14 @@ document.querySelectorAll('.source-tab').forEach(tab=>{
     resetFilters();
     pccrFiltersEl.style.display=currentSource==='pccr'?'':'none';
     threadsFiltersEl.style.display=currentSource==='threads'?'':'none';
-    subtitle.textContent=currentSource==='threads'
-      ?'Threads 社群推薦書單 — '+THREADS_BOOKS.length+' 本'
-      :'教育部 / 國立臺灣圖書館 嬰幼兒閱讀推廣計畫 — 歷年入選好書 '+BOOKS.length+' 本';
+    document.getElementById('favFilters').style.display=currentSource==='favorites'?'':'none';
+    if(currentSource==='pccr'){
+      subtitle.textContent='教育部 / 國立臺灣圖書館 嬰幼兒閱讀推廣計畫 — 歷年入選好書 '+BOOKS.length+' 本';
+    }else if(currentSource==='threads'){
+      subtitle.textContent='Threads 社群推薦書單 — '+THREADS_BOOKS.length+' 本';
+    }else{
+      subtitle.textContent='我的收藏書單 — '+favCache.size+' 本';
+    }
     render();
   });
 });
@@ -368,6 +397,7 @@ function renderPccrCard(b){
   if(b.desc)desc=`<div class="desc">${b.desc}</div>`;
 
   return `<div class="book-card${b.cl?' classic':''}">
+    ${starHtml(b.n,'pccr',b)}
     <div class="title">${titleHtml}</div>
     <div class="tags">${tags.join('')}</div>
     <div class="meta">${meta}</div>
@@ -394,9 +424,50 @@ function renderThreadsCard(b){
   actions+=`<a class="act act-shopee" href="https://shopee.tw/search?keyword=${enc(b.n)}" target="_blank" rel="noopener">蝦皮</a>`;
 
   return `<div class="book-card threads-src">
+    ${starHtml(b.n,'threads',b)}
     <div class="title">${b.n}</div>
     <div class="tags">${tags.join('')}</div>
     ${meta?`<div class="meta">${meta}</div>`:''}
+    <div class="actions">${actions}</div>
+  </div>`;
+}
+
+function renderFavCard(fav){
+  const b=fav.book_data;
+  const statusLabels={want:'想看',owned:'已入手',done:'讀完'};
+  const statusClass={want:'tag-want',owned:'tag-owned',done:'tag-done'};
+
+  const tags=[];
+  if(b.ag)tags.push(`<span class="tag tag-age">${b.ag}歲</span>`);
+  tags.push(`<span class="tag ${statusClass[fav.status]}">${statusLabels[fav.status]}</span>`);
+  if(fav.book_source==='threads'&&b.cat)tags.push(`<span class="tag tag-cat">${b.cat}</span>`);
+
+  let meta='';
+  if(b.a)meta+=`<span><span class="label">作者</span>${b.a}</span>`;
+  if(b.p)meta+=` <span><span class="label">出版</span>${b.p}</span>`;
+
+  const bn=fav.book_name.replace(/'/g,"\\'").replace(/"/g,'&quot;');
+  const bs=fav.book_source;
+  const statusBtns=`<div class="status-btns">
+    <button class="status-btn${fav.status==='want'?' current tag-want':''}" onclick="updateFavStatus('${bn}','${bs}','want')">想看</button>
+    <button class="status-btn${fav.status==='owned'?' current tag-owned':''}" onclick="updateFavStatus('${bn}','${bs}','owned')">已入手</button>
+    <button class="status-btn${fav.status==='done'?' current tag-done':''}" onclick="updateFavStatus('${bn}','${bs}','done')">讀完</button>
+  </div>`;
+
+  let actions='';
+  actions+=`<a class="act act-momo" href="https://www.momoshop.com.tw/search/searchShop.jsp?keyword=${enc(b.n||fav.book_name)}" target="_blank" rel="noopener">momo</a>`;
+  actions+=`<a class="act act-eslite" href="https://www.eslite.com/Search?keyword=${enc(b.n||fav.book_name)}" target="_blank" rel="noopener">誠品</a>`;
+  actions+=`<a class="act act-books" href="https://search.books.com.tw/search/query/key/${enc(b.n||fav.book_name)}" target="_blank" rel="noopener">博客來</a>`;
+  actions+=`<a class="act act-shopee" href="https://shopee.tw/search?keyword=${enc(b.n||fav.book_name)}" target="_blank" rel="noopener">蝦皮</a>`;
+
+  const cardClass=fav.book_source==='threads'?'book-card threads-src':'book-card';
+
+  return `<div class="${cardClass}">
+    ${starHtml(fav.book_name,fav.book_source,b)}
+    <div class="title">${b.n||fav.book_name}</div>
+    <div class="tags">${tags.join('')}</div>
+    ${meta?`<div class="meta">${meta}</div>`:''}
+    ${statusBtns}
     <div class="actions">${actions}</div>
   </div>`;
 }
@@ -406,13 +477,31 @@ function renderCard(b){
 }
 
 function render(){
-  const matched=getActiveBooks().filter(matchBook);
-  resultCount.textContent=matched.length;
-  if(matched.length===0){
-    bookList.innerHTML='<div class="no-result">沒有找到符合條件的書籍</div>';
-    return;
+  let matched;
+  if(currentSource==='favorites'){
+    matched=Array.from(favCache.values());
+    if(filters.search){
+      const s=filters.search;
+      matched=matched.filter(f=>f.book_name.toLowerCase().includes(s));
+    }
+    if(filters.favStatus){
+      matched=matched.filter(f=>f.status===filters.favStatus);
+    }
+    resultCount.textContent=matched.length;
+    if(matched.length===0){
+      bookList.innerHTML='<div class="no-result">沒有收藏的書籍</div>';
+      return;
+    }
+    bookList.innerHTML=matched.map(renderFavCard).join('');
+  }else{
+    matched=getActiveBooks().filter(matchBook);
+    resultCount.textContent=matched.length;
+    if(matched.length===0){
+      bookList.innerHTML='<div class="no-result">沒有找到符合條件的書籍</div>';
+      return;
+    }
+    bookList.innerHTML=matched.map(renderCard).join('');
   }
-  bookList.innerHTML=matched.map(renderCard).join('');
 }
 
 // Auth
@@ -460,6 +549,50 @@ function updateFavTab(){
   }else{
     tab.style.display='none';
   }
+}
+
+function isFav(bookName,source){
+  return favCache.has(bookName+':'+source);
+}
+
+async function toggleFav(bookName,source,bookData){
+  if(!currentUser){
+    document.getElementById('loginPrompt').style.display='';
+    return;
+  }
+  const key=bookName+':'+source;
+  if(favCache.has(key)){
+    const fav=favCache.get(key);
+    await sb.from('favorites').delete().eq('id',fav.id);
+    favCache.delete(key);
+  }else{
+    const row={user_id:currentUser.id,book_name:bookName,book_source:source,book_data:bookData,status:'want'};
+    const{data}=await sb.from('favorites').insert(row).select().single();
+    if(data)favCache.set(key,data);
+  }
+  updateFavTab();
+  render();
+}
+
+function starHtml(bookName,source,bookData){
+  const active=isFav(bookName,source)?'active':'';
+  const icon=isFav(bookName,source)?'\u2605':'\u2606';
+  const bn=bookName.replace(/'/g,"\\'").replace(/"/g,'&quot;');
+  return `<button class="fav-star ${active}" onclick="toggleFav('${bn}','${source}',findBookData('${bn}','${source}'))">${icon}</button>`;
+}
+
+function findBookData(bookName,source){
+  const books=source==='threads'?THREADS_BOOKS:BOOKS;
+  return books.find(b=>b.n===bookName)||{n:bookName};
+}
+
+async function updateFavStatus(bookName,source,newStatus){
+  const key=bookName+':'+source;
+  const fav=favCache.get(key);
+  if(!fav)return;
+  await sb.from('favorites').update({status:newStatus,updated_at:new Date().toISOString()}).eq('id',fav.id);
+  fav.status=newStatus;
+  render();
 }
 
 sb.auth.onAuthStateChange(async(event,session)=>{

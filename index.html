@@ -463,7 +463,7 @@ function renderFavCard(fav){
   if(b.a)meta+=`<span><span class="label">作者</span>${esc(b.a)}</span>`;
   if(b.p)meta+=` <span><span class="label">出版</span>${esc(b.p)}</span>`;
 
-  const bn=fav.book_name.replace(/"/g,'&quot;');
+  const bn=esc(fav.book_name);
   const bs=fav.book_source;
   const statusBtns=`<div class="status-btns">
     <button class="status-btn${fav.status==='want'?' current tag-want':''}" data-bn="${bn}" data-bs="${bs}" data-st="want">想看</button>
@@ -552,14 +552,19 @@ function updateAuthUI(){
   }
 }
 
+let _loadingFavs=false;
 async function loadFavorites(){
-  if(!currentUser)return;
+  if(!currentUser||_loadingFavs)return;
+  _loadingFavs=true;
   try{
     const{data,error}=await sb.from('favorites').select('*').eq('user_id',currentUser.id);
     if(error){console.error('loadFavorites error:',error);return;}
-    favCache.clear();
-    if(data)data.forEach(f=>favCache.set(f.book_name+':'+f.book_source,f));
+    if(!_toggling){
+      favCache.clear();
+      if(data)data.forEach(f=>favCache.set(f.book_name+':'+f.book_source,f));
+    }
   }catch(e){console.error('loadFavorites exception:',e);}
+  finally{_loadingFavs=false;}
 }
 
 function updateFavTab(){
@@ -590,23 +595,25 @@ async function toggleFav(bookName,source,bookData){
     if(favCache.has(key)){
       const fav=favCache.get(key);
       const{error}=await sb.from('favorites').delete().eq('id',fav.id);
-      if(error){console.error('delete favorite error:',error);return;}
-      favCache.delete(key);
+      if(!error)favCache.delete(key);
+      else console.error('delete favorite error:',error);
     }else{
       const row={user_id:currentUser.id,book_name:bookName,book_source:source,book_data:bookData,status:'want'};
       const{data,error}=await sb.from('favorites').insert(row).select().single();
-      if(error){console.error('insert favorite error:',error);return;}
-      if(data)favCache.set(key,data);
+      if(!error&&data)favCache.set(key,data);
+      else console.error('insert favorite error:',error);
     }
+  }finally{
+    _toggling=false;
     updateFavTab();
     render();
-  }finally{_toggling=false;}
+  }
 }
 
 function starHtml(bookName,source){
   const active=isFav(bookName,source)?'active':'';
   const icon=isFav(bookName,source)?'\u2605':'\u2606';
-  return `<button class="fav-star ${active}" data-fav-name="${bookName.replace(/"/g,'&quot;')}" data-fav-source="${source}">${icon}</button>`;
+  return `<button class="fav-star ${active}" data-fav-name="${esc(bookName)}" data-fav-source="${source}">${icon}</button>`;
 }
 
 function findBookData(bookName,source){

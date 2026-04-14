@@ -252,7 +252,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SUPABASE_URL='https://fekjouhveosgvebgikcp.supabase.co';
-const SUPABASE_ANON_KEY='sb_publishable_A6fkTP1WVU9QEvjYXjRKVw_fgEmOf_9';
+const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZla2pvdWh2ZW9zZ3ZlYmdpa2NwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxNDcwMzEsImV4cCI6MjA5MTcyMzAzMX0.hOyhjd2NmBFGgJV9EfzOiRGOT2mFraZG4Y4daG_8QEc';
 const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 if(window.location.hash&&window.location.hash.includes('access_token')){
   setTimeout(()=>{history.replaceState(null,'',window.location.pathname)},1000);

@@ -61,6 +61,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans
 .act-pchome:hover{background:#00695c;color:#fff}
 .act-yt{background:#ffebee;color:#d32f2f;border-color:#ffcdd2}
 .act-yt:hover{background:#d32f2f;color:#fff}
+.act-shopee{background:#fff3e0;color:#ee4d2d;border-color:#ffcc80}
+.act-shopee:hover{background:#ee4d2d;color:#fff}
 .no-result{text-align:center;padding:3rem 1rem;color:#bbb;font-size:1.1rem}
 .footer{background:#5a4228;color:#d4c4a8;text-align:center;padding:1.5rem 1rem;margin-top:2rem;font-size:0.8rem;line-height:1.8}
 .footer a{color:#f5d69f;text-decoration:none}
@@ -222,6 +224,7 @@ function links(b){
   html+=`<a class="act act-eslite" href="https://www.eslite.com/Search?keyword=${enc(name)}" target="_blank" rel="noopener">誠品</a>`;
   html+=`<a class="act act-pchome" href="https://ecshweb.pchome.com.tw/search/v4.3/?q=${enc(name)}" target="_blank" rel="noopener">PChome</a>`;
   html+=`<a class="act act-yt" href="https://www.youtube.com/results?search_query=${enc(name+' 繪本 共讀')}" target="_blank" rel="noopener">YouTube</a>`;
+  html+=`<a class="act act-shopee" href="https://shopee.tw/search?keyword=${enc(name)}" target="_blank" rel="noopener">蝦皮</a>`;
   return html;
 }
 
@@ -363,6 +366,7 @@ function renderThreadsCard(b){
   actions+=`<a class="act act-eslite" href="https://www.eslite.com/Search?keyword=${enc(b.n)}" target="_blank" rel="noopener">誠品</a>`;
   actions+=`<a class="act act-books" href="https://search.books.com.tw/search/query/key/${enc(b.n)}" target="_blank" rel="noopener">博客來</a>`;
   actions+=`<a class="act act-yt" href="https://www.youtube.com/results?search_query=${enc(b.n+' 繪本 共讀')}" target="_blank" rel="noopener">YouTube</a>`;
+  actions+=`<a class="act act-shopee" href="https://shopee.tw/search?keyword=${enc(b.n)}" target="_blank" rel="noopener">蝦皮</a>`;
 
   return `<div class="book-card threads-src">
     <div class="title">${b.n}</div>

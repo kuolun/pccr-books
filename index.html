@@ -529,7 +529,7 @@ async function loginWithGoogle(){
 }
 
 async function logout(){
-  await sb.auth.signOut();
+  try{await withTimeout(sb.auth.signOut(),5000);}catch(e){console.error('signOut error:',e);dbg('logout err:'+e.message);}
   currentUser=null;
   favCache.clear();
   if(currentSource==='favorites'){
@@ -585,6 +585,24 @@ function isFav(bookName,source){
 }
 
 let _toggling=false;
+function withTimeout(promise,ms){
+  return Promise.race([promise,new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),ms))]);
+}
+async function ensureSession(){
+  const{data:{session}}=await sb.auth.getSession();
+  if(!session){
+    const{data:{session:refreshed},error}=await sb.auth.refreshSession();
+    if(error||!refreshed){
+      currentUser=null;
+      updateAuthUI();
+      updateFavTab();
+      render();
+      document.getElementById('loginPrompt').style.display='';
+      return false;
+    }
+  }
+  return true;
+}
 async function toggleFav(bookName,source,bookData){
   if(!currentUser){
     document.getElementById('loginPrompt').style.display='';
@@ -593,18 +611,22 @@ async function toggleFav(bookName,source,bookData){
   if(_toggling)return;
   _toggling=true;
   try{
+    if(!await withTimeout(ensureSession(),5000)){dbg('no valid session');return;}
     const key=bookName+':'+source;
     if(favCache.has(key)){
       const fav=favCache.get(key);
-      const{error}=await sb.from('favorites').delete().eq('id',fav.id);
+      const{error}=await withTimeout(sb.from('favorites').delete().eq('id',fav.id),5000);
       if(!error)favCache.delete(key);
-      else console.error('delete favorite error:',error);
+      else{console.error('delete favorite error:',error);dbg('delete err:'+error.message);}
     }else{
       const row={user_id:currentUser.id,book_name:bookName,book_source:source,book_data:bookData,status:'want'};
-      const{data,error}=await sb.from('favorites').insert(row).select().single();
+      const{data,error}=await withTimeout(sb.from('favorites').insert(row).select().single(),5000);
       if(!error&&data)favCache.set(key,data);
-      else console.error('insert favorite error:',error);
+      else{console.error('insert favorite error:',error);dbg('insert err:'+(error?.message||'no data'));}
     }
+  }catch(e){
+    console.error('toggleFav exception:',e);
+    dbg('toggleFav catch:'+e.message);
   }finally{
     _toggling=false;
     updateFavTab();
@@ -627,9 +649,11 @@ async function updateFavStatus(bookName,source,newStatus){
   const key=bookName+':'+source;
   const fav=favCache.get(key);
   if(!fav)return;
-  const{error}=await sb.from('favorites').update({status:newStatus,updated_at:new Date().toISOString()}).eq('id',fav.id);
-  if(error){console.error('update status error:',error);return;}
-  fav.status=newStatus;
+  try{
+    const{error}=await withTimeout(sb.from('favorites').update({status:newStatus,updated_at:new Date().toISOString()}).eq('id',fav.id),5000);
+    if(error){console.error('update status error:',error);dbg('status err:'+error.message);return;}
+    fav.status=newStatus;
+  }catch(e){console.error('updateFavStatus exception:',e);dbg('status catch:'+e.message);}
   render();
 }
 

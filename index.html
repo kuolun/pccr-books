@@ -535,9 +535,12 @@ function updateAuthUI(){
 
 async function loadFavorites(){
   if(!currentUser)return;
-  const{data}=await sb.from('favorites').select('*').eq('user_id',currentUser.id);
-  favCache.clear();
-  if(data)data.forEach(f=>favCache.set(f.book_name+':'+f.book_source,f));
+  try{
+    const{data,error}=await sb.from('favorites').select('*').eq('user_id',currentUser.id);
+    favCache.clear();
+    if(error){console.error('loadFavorites error:',error);return;}
+    if(data)data.forEach(f=>favCache.set(f.book_name+':'+f.book_source,f));
+  }catch(e){console.error('loadFavorites exception:',e);}
 }
 
 function updateFavTab(){
@@ -596,13 +599,15 @@ async function updateFavStatus(bookName,source,newStatus){
 }
 
 sb.auth.onAuthStateChange(async(event,session)=>{
-  currentUser=session?.user||null;
-  updateAuthUI();
-  if(currentUser){
-    await loadFavorites();
-  }
-  updateFavTab();
-  render();
+  try{
+    currentUser=session?.user||null;
+    updateAuthUI();
+    if(currentUser){
+      await loadFavorites();
+    }
+    updateFavTab();
+    render();
+  }catch(e){console.error('onAuthStateChange error:',e);}
 });
 
 render();

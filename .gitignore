@@ -2,3 +2,4 @@ all_books_raw.json
 books_trimmed.json
 .playwright-mcp/
 screenshot-*.png
+.superpowers/

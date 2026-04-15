@@ -155,6 +155,14 @@ tailwind.config = {
           <span class="pill inline-block px-3 py-1 rounded-full text-sm cursor-pointer border border-sand bg-white text-stone-500 transition-all duration-150 select-none" data-val="done">讀完</span>
         </div>
       </div>
+      <div class="filter-group flex flex-col gap-1 min-w-[120px] max-md:w-full">
+        <label class="text-xs text-stone-400 font-semibold uppercase tracking-wide">來源</label>
+        <div class="filter-pills flex flex-wrap gap-1.5" id="favSourceFilter">
+          <span class="pill active inline-block px-3 py-1 rounded-full text-sm cursor-pointer border border-sand bg-white text-stone-500 transition-all duration-150 select-none" data-val="">全部</span>
+          <span class="pill inline-block px-3 py-1 rounded-full text-sm cursor-pointer border border-sand bg-white text-stone-500 transition-all duration-150 select-none" data-val="pccr">教育部</span>
+          <span class="pill inline-block px-3 py-1 rounded-full text-sm cursor-pointer border border-sand bg-white text-stone-500 transition-all duration-150 select-none" data-val="threads">社群</span>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -219,7 +227,7 @@ const threadsFiltersEl=document.getElementById('threadsFilters');
 let currentSource='pccr';
 function getActiveBooks(){return currentSource==='threads'?THREADS_BOOKS:BOOKS}
 
-let filters={search:'',age:'',year:'',cat:'',origin:'',classic:false,favStatus:''};
+let filters={search:'',age:'',year:'',cat:'',origin:'',classic:false,favStatus:'',favSource:''};
 
 function setupPills(containerId,filterKey){
   const container=document.getElementById(containerId);
@@ -243,6 +251,7 @@ setupPills('originFilter','origin');
 setupPills('classicFilter','classic');
 setupPills('threadsAgeFilter','age');
 setupPills('favStatusFilter','favStatus');
+setupPills('favSourceFilter','favSource');
 
 searchBox.addEventListener('input',()=>{filters.search=searchBox.value.trim().toLowerCase();render()});
 yearFilter.addEventListener('change',()=>{filters.year=yearFilter.value;render()});
@@ -250,7 +259,7 @@ catFilter.addEventListener('change',()=>{filters.cat=catFilter.value;render()});
 threadsCatFilter.addEventListener('change',()=>{filters.cat=threadsCatFilter.value;render()});
 
 function resetFilters(){
-  filters={search:'',age:'',year:'',cat:'',origin:'',classic:false,favStatus:''};
+  filters={search:'',age:'',year:'',cat:'',origin:'',classic:false,favStatus:'',favSource:''};
   searchBox.value='';
   yearFilter.value='';
   catFilter.value='';
@@ -370,6 +379,9 @@ function renderFavCard(bookName,source,status){
   const statusBtnClass={want:'bg-blue-50 text-blue-700',owned:'bg-orange-50 text-orange-700',done:'bg-emerald-50 text-emerald-700'};
 
   const tags=[];
+  tags.push(source==='threads'
+    ?`<span class="inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-violet-50 text-violet-700">社群</span>`
+    :`<span class="inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-matcha/10 text-matcha">教育部</span>`);
   if(b.ag)tags.push(`<span class="inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700">${esc(b.ag)}歲</span>`);
   tags.push(`<span class="inline-block px-2 py-0.5 rounded-full text-xs font-semibold ${statusTagClass[status]}">${statusLabels[status]}</span>`);
   if(source==='threads'&&b.cat)tags.push(`<span class="inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-stone-100 text-stone-600">${esc(b.cat)}</span>`);
@@ -420,6 +432,9 @@ function render(){
     }
     if(filters.favStatus){
       entries=entries.filter(e=>e.status===filters.favStatus);
+    }
+    if(filters.favSource){
+      entries=entries.filter(e=>e.source===filters.favSource);
     }
     resultCount.textContent=entries.length;
     if(entries.length===0){

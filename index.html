@@ -25,7 +25,8 @@ tailwind.config = {
 .pill.active{background:#5b8c5a !important;color:#fff !important;border-color:#5b8c5a !important}
 .pill:hover{border-color:#7ab87a;color:#5b8c5a}
 .source-tab{background:#fff;color:#5b8c5a;border:1px solid #5b8c5a}
-.source-tab.active{background:#5b8c5a !important;color:#fff !important;border-color:#5b8c5a !important}
+.source-tab .tab-count{background:rgba(91,140,90,0.1)}
+.source-tab.active{background:#5b8c5a;color:#fff;border-color:#5b8c5a}
 .source-tab.active .tab-count{background:rgba(255,255,255,0.2)}
 .source-tab:hover:not(.active){background:#f0f9f0}
 .status-btn.current{font-weight:700;border-color:currentColor}
@@ -47,9 +48,9 @@ tailwind.config = {
 </div>
 
 <div class="source-tabs flex justify-center gap-2 max-w-[1200px] mx-auto mt-4 px-2">
-  <button class="source-tab active rounded-full px-5 py-2 text-sm font-semibold transition-all duration-200 cursor-pointer bg-matcha text-white" data-source="pccr">教育部好書 <span class="tab-count text-xs bg-white/20 px-2 py-0.5 rounded-full ml-1">848</span></button>
-  <button class="source-tab rounded-full px-5 py-2 text-sm font-semibold transition-all duration-200 cursor-pointer bg-white text-matcha border border-matcha" data-source="threads">社群推薦 <span class="tab-count text-xs bg-matcha/10 px-2 py-0.5 rounded-full ml-1">84</span></button>
-  <button class="source-tab rounded-full px-5 py-2 text-sm font-semibold transition-all duration-200 cursor-pointer bg-white text-matcha border border-matcha" data-source="favorites" id="favTab">我的收藏 <span class="tab-count text-xs bg-matcha/10 px-2 py-0.5 rounded-full ml-1">0</span></button>
+  <button class="source-tab active rounded-full px-5 py-2 text-sm font-semibold transition-all duration-200 cursor-pointer" data-source="pccr">教育部好書 <span class="tab-count text-xs px-2 py-0.5 rounded-full ml-1">848</span></button>
+  <button class="source-tab rounded-full px-5 py-2 text-sm font-semibold transition-all duration-200 cursor-pointer" data-source="threads">社群推薦 <span class="tab-count text-xs px-2 py-0.5 rounded-full ml-1">84</span></button>
+  <button class="source-tab rounded-full px-5 py-2 text-sm font-semibold transition-all duration-200 cursor-pointer" data-source="favorites" id="favTab">我的收藏 <span class="tab-count text-xs px-2 py-0.5 rounded-full ml-1">0</span></button>
 </div>
 
 <div class="max-w-[1200px] mx-auto px-4">

@@ -559,7 +559,7 @@ async function loadFavorites(){
   if(!currentUser||_loadingFavs)return;
   _loadingFavs=true;
   try{
-    const{data,error}=await sb.from('favorites').select('*').eq('user_id',currentUser.id);
+    const{data,error}=await withTimeout(sb.from('favorites').select('*').eq('user_id',currentUser.id),8000);
     if(error){console.error('loadFavorites error:',error);return;}
     if(!_toggling){
       favCache.clear();
@@ -588,22 +588,24 @@ let _toggling=false;
 function withTimeout(promise,ms){
   return Promise.race([promise,new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),ms))]);
 }
+function sessionExpired(s){return !s||(s.expires_at&&Date.now()/1000>=s.expires_at-60);}
 async function ensureSession(){
-  const{data:{session}}=await sb.auth.getSession();
-  const expired=!session||(session.expires_at&&Date.now()/1000>=session.expires_at-60);
-  if(expired){
-    const{data:{session:refreshed},error}=await sb.auth.refreshSession();
-    if(error||!refreshed){
-      currentUser=null;
-      updateAuthUI();
-      updateFavTab();
-      render();
-      document.getElementById('loginPrompt').style.display='';
-      return false;
-    }
+  try{
+    const{data:{session}}=await withTimeout(sb.auth.getSession(),3000);
+    if(!sessionExpired(session))return true;
+    const{data:{session:refreshed},error}=await withTimeout(sb.auth.refreshSession(),5000);
+    if(error||!refreshed)throw new Error('refresh failed');
     currentUser=refreshed.user;
+    return true;
+  }catch(e){
+    dbg('ensureSession fail:'+e.message);
+    currentUser=null;
+    updateAuthUI();
+    updateFavTab();
+    render();
+    document.getElementById('loginPrompt').style.display='';
+    return false;
   }
-  return true;
 }
 async function toggleFav(bookName,source,bookData){
   if(!currentUser){
@@ -613,7 +615,7 @@ async function toggleFav(bookName,source,bookData){
   if(_toggling)return;
   _toggling=true;
   try{
-    if(!await withTimeout(ensureSession(),10000)){dbg('no valid session');return;}
+    if(!await ensureSession()){dbg('no valid session');return;}
     const key=bookName+':'+source;
     if(favCache.has(key)){
       const fav=favCache.get(key);

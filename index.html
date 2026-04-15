@@ -215,7 +215,7 @@ function links(b){
   if(isbn)html+=`<a class="${base} act-books bg-amber-50 text-amber-700 border-amber-200" href="https://search.books.com.tw/search/query/key/${enc(isbn)}" target="_blank" rel="noopener">博客來</a>`;
   html+=`<a class="${base} act-momo bg-red-50 text-red-700 border-red-200" href="https://www.momoshop.com.tw/search/searchShop.jsp?keyword=${enc(name)}" target="_blank" rel="noopener">momo</a>`;
   html+=`<a class="${base} act-eslite bg-green-50 text-green-700 border-green-200" href="https://www.eslite.com/Search?keyword=${enc(name)}" target="_blank" rel="noopener">誠品</a>`;
-  html+=`<a class="${base} act-pchome bg-teal-50 text-teal-700 border-teal-200" href="https://ecshweb.pchome.com.tw/search/v4.3/?q=${enc(name)}" target="_blank" rel="noopener">PChome</a>`;
+  html+=`<a class="${base} act-pchome bg-teal-50 text-teal-700 border-teal-200" href="https://24h.pchome.com.tw/search/?q=${enc(name)}" target="_blank" rel="noopener">PChome</a>`;
   html+=`<a class="${base} act-yt bg-red-50 text-red-600 border-red-200" href="https://www.youtube.com/results?search_query=${enc(name+' 繪本 共讀')}" target="_blank" rel="noopener">YouTube</a>`;
   html+=`<a class="${base} act-shopee bg-orange-50 text-orange-600 border-orange-200" href="https://shopee.tw/search?keyword=${enc(name)}" target="_blank" rel="noopener">蝦皮</a>`;
   return html;

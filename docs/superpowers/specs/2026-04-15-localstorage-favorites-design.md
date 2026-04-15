@@ -89,6 +89,7 @@
 ### `renderFavCard(fav)`
 - 參數從 `fav` object (Supabase row) 改為 `{bookName, source, status}`
 - 從 BOOKS/THREADS_BOOKS 查找書籍資料來渲染
+- 找不到書時 fallback 為 `{n: bookName}` — 只顯示書名和購書連結，不顯示作者等 metadata
 
 ## 新增的核心程式碼
 

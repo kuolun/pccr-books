@@ -380,6 +380,7 @@ function renderFavCard(bookName,source,status){
 
   let actions='';
   const ab='inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold no-underline transition-all duration-150 border';
+  if(b.isbn)actions+=`<a class="${ab} act-lib bg-blue-50 text-blue-700 border-blue-200" href="https://cis2.ntl.edu.tw/search/?query_term=${enc(b.isbn)}&query_field=issn_isbn" target="_blank" rel="noopener">圖書館借閱</a>`;
   actions+=`<a class="${ab} act-momo bg-red-50 text-red-700 border-red-200" href="https://www.momoshop.com.tw/search/searchShop.jsp?keyword=${enc(bookName)}" target="_blank" rel="noopener">momo</a>`;
   actions+=`<a class="${ab} act-eslite bg-green-50 text-green-700 border-green-200" href="https://www.eslite.com/Search?keyword=${enc(bookName)}" target="_blank" rel="noopener">誠品</a>`;
   actions+=`<a class="${ab} act-books bg-amber-50 text-amber-700 border-amber-200" href="https://search.books.com.tw/search/query/key/${enc(bookName)}" target="_blank" rel="noopener">博客來</a>`;

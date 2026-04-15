@@ -181,12 +181,37 @@ const THREADS_BOOKS=[{"n":"Dear Zoo","ag":"0~3","cat":"硬頁書／翻翻書","s
 function enc(s){return encodeURIComponent(s)}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 
+function libLinks(name){
+  const n=enc(name);
+  const lb='inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs no-underline transition-all duration-150 border bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-600 hover:text-white';
+  return `<div class="lib-dropdown hidden mt-1.5 flex flex-wrap gap-1">
+    <a class="${lb}" href="https://book.tpml.edu.tw/search?searchField=TI&searchInput=${n}" target="_blank" rel="noopener">台北市</a>
+    <a class="${lb}" href="https://webpac.ntpclib.gov.tw/Miracle_rwd/searchResult?m=as&searchsQuerys=${n}" target="_blank" rel="noopener">新北市</a>
+    <a class="${lb}" href="https://webpac.typl.gov.tw/search?searchField=TI&searchInput=${n}" target="_blank" rel="noopener">桃園市</a>
+    <a class="${lb}" href="https://webpac.hccg.gov.tw/search?searchField=TI&searchInput=${n}" target="_blank" rel="noopener">新竹市</a>
+    <a class="${lb}" href="https://webpac.hchcc.gov.tw/search?searchField=TI&searchInput=${n}" target="_blank" rel="noopener">新竹縣</a>
+    <a class="${lb}" href="https://webpacx.miaoli.gov.tw/search?searchField=TI&searchInput=${n}" target="_blank" rel="noopener">苗栗縣</a>
+    <a class="${lb}" href="https://webpac.taichung.gov.tw/search?searchField=TI&searchInput=${n}" target="_blank" rel="noopener">台中市</a>
+    <a class="${lb}" href="https://ipac.nlpi.edu.tw/search?searchField=TI&searchInput=${n}" target="_blank" rel="noopener">國立公共</a>
+    <a class="${lb}" href="https://webpac.nthcc.gov.tw/webpac/search.cfm?m=as&t0=k&c0=and&k0=${n}" target="_blank" rel="noopener">南投縣</a>
+    <a class="${lb}" href="https://lib.cycab.gov.tw/search?searchField=TI&searchInput=${n}" target="_blank" rel="noopener">嘉義縣</a>
+    <a class="${lb}" href="https://webpacx.chiayi.gov.tw/search?searchField=TI&searchInput=${n}" target="_blank" rel="noopener">嘉義市</a>
+    <a class="${lb}" href="https://lib.tnml.tn.edu.tw/webpac/search.cfm?m=ss&t0=k&c0=and&k0=${n}" target="_blank" rel="noopener">台南市</a>
+    <a class="${lb}" href="https://webpacx.ksml.edu.tw/search?searchField=TI&searchInput=${n}" target="_blank" rel="noopener">高雄市</a>
+    <a class="${lb}" href="https://library.pthg.gov.tw/search?searchField=TI&searchInput=${n}" target="_blank" rel="noopener">屏東縣</a>
+    <a class="${lb}" href="https://library.ccl.ttct.edu.tw/bookSearchList.do?search_input=${n}" target="_blank" rel="noopener">台東縣</a>
+    <a class="${lb}" href="https://webpac.klccab.gov.tw/webpac/search.cfm?m=as&t0=t&c0=and&k0=${n}" target="_blank" rel="noopener">基隆市</a>
+    <a class="${lb}" href="https://cis2.ntl.edu.tw/webpac/search/?q=${n}" target="_blank" rel="noopener">國立台灣</a>
+  </div>`;
+}
+
 function links(b){
   const isbn=b.isbn;
   const name=b.n;
   const base='inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold no-underline transition-all duration-150 border';
   let html='';
-  if(isbn)html+=`<a class="${base} act-lib bg-blue-50 text-blue-700 border-blue-200" href="https://cis2.ntl.edu.tw/search/?query_term=${enc(isbn)}&query_field=issn_isbn" target="_blank" rel="noopener">圖書館借閱</a>`;
+  html+=`<button class="lib-toggle ${base} act-lib bg-blue-50 text-blue-700 border-blue-200">圖書館借閱 ▼</button>`;
+  html+=libLinks(name);
   if(isbn)html+=`<a class="${base} act-books bg-amber-50 text-amber-700 border-amber-200" href="https://search.books.com.tw/search/query/key/${enc(isbn)}" target="_blank" rel="noopener">博客來</a>`;
   html+=`<a class="${base} act-momo bg-red-50 text-red-700 border-red-200" href="https://www.momoshop.com.tw/search/searchShop.jsp?keyword=${enc(name)}" target="_blank" rel="noopener">momo</a>`;
   html+=`<a class="${base} act-eslite bg-green-50 text-green-700 border-green-200" href="https://www.eslite.com/Search?keyword=${enc(name)}" target="_blank" rel="noopener">誠品</a>`;
@@ -337,6 +362,8 @@ function renderThreadsCard(b){
   let actions='';
   const ab='inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold no-underline transition-all duration-150 border';
   if(b.url&&b.url.startsWith('https://'))actions+=`<a class="${ab} act-threads bg-purple-50 text-purple-700 border-purple-200" href="${esc(b.url)}" target="_blank" rel="noopener">Threads 原文</a>`;
+  actions+=`<button class="lib-toggle ${ab} act-lib bg-blue-50 text-blue-700 border-blue-200">圖書館借閱 ▼</button>`;
+  actions+=libLinks(b.n);
   actions+=`<a class="${ab} act-momo bg-red-50 text-red-700 border-red-200" href="https://www.momoshop.com.tw/search/searchShop.jsp?keyword=${enc(b.n)}" target="_blank" rel="noopener">momo</a>`;
   actions+=`<a class="${ab} act-eslite bg-green-50 text-green-700 border-green-200" href="https://www.eslite.com/Search?keyword=${enc(b.n)}" target="_blank" rel="noopener">誠品</a>`;
   actions+=`<a class="${ab} act-books bg-amber-50 text-amber-700 border-amber-200" href="https://search.books.com.tw/search/query/key/${enc(b.n)}" target="_blank" rel="noopener">博客來</a>`;
@@ -380,7 +407,8 @@ function renderFavCard(bookName,source,status){
 
   let actions='';
   const ab='inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold no-underline transition-all duration-150 border';
-  if(b.isbn)actions+=`<a class="${ab} act-lib bg-blue-50 text-blue-700 border-blue-200" href="https://cis2.ntl.edu.tw/search/?query_term=${enc(b.isbn)}&query_field=issn_isbn" target="_blank" rel="noopener">圖書館借閱</a>`;
+  actions+=`<button class="lib-toggle ${ab} act-lib bg-blue-50 text-blue-700 border-blue-200">圖書館借閱 ▼</button>`;
+  actions+=libLinks(bookName);
   actions+=`<a class="${ab} act-momo bg-red-50 text-red-700 border-red-200" href="https://www.momoshop.com.tw/search/searchShop.jsp?keyword=${enc(bookName)}" target="_blank" rel="noopener">momo</a>`;
   actions+=`<a class="${ab} act-eslite bg-green-50 text-green-700 border-green-200" href="https://www.eslite.com/Search?keyword=${enc(bookName)}" target="_blank" rel="noopener">誠品</a>`;
   actions+=`<a class="${ab} act-books bg-amber-50 text-amber-700 border-amber-200" href="https://search.books.com.tw/search/query/key/${enc(bookName)}" target="_blank" rel="noopener">博客來</a>`;
@@ -488,6 +516,15 @@ bookList.addEventListener('click',(e)=>{
   if(statusBtn){
     const{bn,bs,st}=statusBtn.dataset;
     if(bn&&bs&&st)updateFavStatus(bn,bs,st);
+    return;
+  }
+  const libBtn=e.target.closest('.lib-toggle');
+  if(libBtn){
+    const dd=libBtn.nextElementSibling;
+    if(dd&&dd.classList.contains('lib-dropdown')){
+      dd.classList.toggle('hidden');
+      libBtn.textContent=dd.classList.contains('hidden')?'圖書館借閱 ▼':'圖書館借閱 ▲';
+    }
   }
 });
 

@@ -4,127 +4,69 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>嬰幼兒好書快速查詢</title>
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif;background:#fdf8f0;color:#3a3a3a;line-height:1.6}
-.header{background:linear-gradient(135deg,#f9e4b7 0%,#f5d69f 50%,#ecc87a 100%);padding:2rem 1rem 1.5rem;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.08)}
-.header h1{font-size:1.8rem;color:#5a4228;margin-bottom:0.3rem;letter-spacing:0.05em}
-.header p{color:#7a6548;font-size:0.9rem}
-.container{max-width:1200px;margin:0 auto;padding:0 1rem}
-.search-area{background:#fff;border-radius:12px;padding:1.2rem;margin:1.5rem auto;max-width:1200px;box-shadow:0 2px 12px rgba(0,0,0,0.06)}
-.search-box{width:100%;padding:0.8rem 1rem;font-size:1rem;border:2px solid #e8dcc8;border-radius:8px;outline:none;transition:border-color 0.2s}
-.search-box:focus{border-color:#d4a853}
-.search-box::placeholder{color:#bbb}
-.filters{display:flex;flex-wrap:wrap;gap:0.8rem;margin-top:1rem;align-items:flex-end}
-.filter-group{display:flex;flex-direction:column;gap:0.3rem;min-width:120px}
-.filter-group label{font-size:0.75rem;color:#888;font-weight:600;text-transform:uppercase;letter-spacing:0.05em}
-.filter-group select{padding:0.45rem 0.6rem;border:1.5px solid #e0d5c3;border-radius:6px;font-size:0.85rem;background:#fff;color:#555;cursor:pointer;outline:none}
-.filter-group select:focus{border-color:#d4a853}
-.filter-pills{display:flex;flex-wrap:wrap;gap:0.4rem}
-.pill{display:inline-block;padding:0.3rem 0.7rem;border-radius:20px;font-size:0.8rem;cursor:pointer;border:1.5px solid #e0d5c3;background:#fff;color:#777;transition:all 0.15s;user-select:none}
-.pill:hover{border-color:#d4a853;color:#5a4228}
-.pill.active{background:#5a4228;color:#fff;border-color:#5a4228}
-.stats{display:flex;justify-content:space-between;align-items:center;margin:1rem auto;max-width:1200px;padding:0 0.2rem}
-.stats .count{font-size:0.95rem;color:#888}
-.stats .count strong{color:#5a4228;font-size:1.1rem}
-.reset-btn{background:none;border:1px solid #ccc;border-radius:6px;padding:0.3rem 0.8rem;font-size:0.8rem;cursor:pointer;color:#999;transition:all 0.15s}
-.reset-btn:hover{border-color:#d4a853;color:#5a4228}
-.book-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1rem;max-width:1200px;margin:0 auto;padding-bottom:2rem}
-.book-card{background:#fff;border-radius:10px;padding:1rem 1.2rem;box-shadow:0 1px 6px rgba(0,0,0,0.05);transition:box-shadow 0.2s;border-left:4px solid #e8dcc8;display:flex;flex-direction:column}
-.book-card:hover{box-shadow:0 4px 16px rgba(0,0,0,0.1)}
-.book-card.classic{border-left-color:#d4a853}
-.book-card .title{font-size:1.05rem;font-weight:700;margin-bottom:0.4rem}
-.book-card .title a{color:#3a3028;text-decoration:none;transition:color 0.15s}
-.book-card .title a:hover{color:#b8860b;text-decoration:underline}
-.book-card .tags{display:flex;flex-wrap:wrap;gap:0.3rem;margin-bottom:0.5rem}
-.tag{display:inline-block;padding:0.15rem 0.5rem;border-radius:12px;font-size:0.7rem;font-weight:600}
-.tag-age{background:#e8f4f0;color:#2d8a6e}
-.tag-year{background:#eee8f5;color:#6b5b8a}
-.tag-classic{background:#fff3d6;color:#b8860b}
-.tag-local{background:#fde8e8;color:#c0392b}
-.tag-cat{background:#f0f0f0;color:#666}
-.book-card .meta{font-size:0.82rem;color:#777;line-height:1.7}
-.book-card .meta span{display:inline-block}
-.book-card .meta .label{color:#aaa;margin-right:0.2rem}
-.book-card .desc{font-size:0.78rem;color:#999;margin-top:0.4rem;border-top:1px solid #f0ece4;padding-top:0.4rem;line-height:1.5}
-.book-card .actions{display:flex;flex-wrap:wrap;gap:0.4rem;margin-top:auto;padding-top:0.6rem;border-top:1px solid #f0ece4}
-.act{display:inline-flex;align-items:center;gap:0.25rem;padding:0.3rem 0.6rem;border-radius:6px;font-size:0.72rem;font-weight:600;text-decoration:none;transition:all 0.15s;border:1px solid transparent}
-.act-lib{background:#e3f2fd;color:#1565c0;border-color:#bbdefb}
-.act-lib:hover{background:#1565c0;color:#fff}
-.act-books{background:#fff8e1;color:#f57f17;border-color:#fff176}
-.act-books:hover{background:#f57f17;color:#fff}
-.act-momo{background:#fce4ec;color:#c62828;border-color:#f8bbd0}
-.act-momo:hover{background:#c62828;color:#fff}
-.act-eslite{background:#e8f5e9;color:#2e7d32;border-color:#c8e6c9}
-.act-eslite:hover{background:#2e7d32;color:#fff}
-.act-pchome{background:#e0f2f1;color:#00695c;border-color:#b2dfdb}
-.act-pchome:hover{background:#00695c;color:#fff}
-.act-yt{background:#ffebee;color:#d32f2f;border-color:#ffcdd2}
-.act-yt:hover{background:#d32f2f;color:#fff}
-.act-shopee{background:#fff3e0;color:#ee4d2d;border-color:#ffcc80}
-.act-shopee:hover{background:#ee4d2d;color:#fff}
-.no-result{text-align:center;padding:3rem 1rem;color:#bbb;font-size:1.1rem}
-.footer{background:#5a4228;color:#d4c4a8;text-align:center;padding:1.5rem 1rem;margin-top:2rem;font-size:0.8rem;line-height:1.8}
-.footer a{color:#f5d69f;text-decoration:none}
-.footer a:hover{text-decoration:underline}
-.source-tabs{display:flex;justify-content:center;gap:0;max-width:1200px;margin:1rem auto 0;border-bottom:2px solid #e8dcc8}
-.source-tab{padding:0.7rem 1.5rem;font-size:0.95rem;font-weight:600;border:none;background:none;cursor:pointer;color:#999;border-bottom:3px solid transparent;transition:all 0.2s}
-.source-tab:hover{color:#5a4228}
-.source-tab.active{color:#5a4228;border-bottom-color:#d4a853}
-.tab-count{font-size:0.75rem;background:#f0ece4;padding:0.1rem 0.4rem;border-radius:8px;margin-left:0.3rem}
-.book-card.threads-src{border-left-color:#7B68EE}
-.act-threads{background:#f0ecff;color:#5a4fcf;border-color:#d6d0f5}
-.act-threads:hover{background:#5a4fcf;color:#fff}
-.book-card{position:relative}
-.fav-star{position:absolute;top:0.5rem;right:0.5rem;font-size:1.3rem;cursor:pointer;color:#ccc;transition:color 0.15s;background:none;border:none;padding:0.2rem;line-height:1}
-.fav-star:hover{color:#d4a853}
-.fav-star.active{color:#d4a853}
-.tag-want{background:#e3f2fd;color:#1565c0}
-.tag-owned{background:#fff3e0;color:#e65100}
-.tag-done{background:#e8f5e9;color:#2e7d32}
-.status-btns{display:flex;gap:0.3rem;margin-top:0.4rem}
-.status-btn{padding:0.2rem 0.5rem;border-radius:4px;font-size:0.72rem;cursor:pointer;border:1px solid #ddd;background:#fff;transition:all 0.15s}
-.status-btn:hover{border-color:#d4a853}
-.status-btn.current{font-weight:700;border-color:currentColor}
-@media(max-width:600px){
-  .header h1{font-size:1.4rem}
-  .book-list{grid-template-columns:1fr}
-  .filters{flex-direction:column}
-  .filter-group{width:100%}
-  .filter-group select{width:100%}
-  .source-tabs{gap:0}
-  .source-tab{padding:0.5rem 1rem;font-size:0.85rem}
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        cream: '#f6f1eb',
+        matcha: { DEFAULT: '#5b8c5a', light: '#7ab87a' },
+        sand: '#e8e0d4',
+      }
+    }
+  }
 }
+</script>
+<style>
+/* Minimal styles for things Tailwind can't easily handle */
+.fav-star.active{color:#f59e0b}
+.fav-star:hover{color:#f59e0b}
+.pill.active{background:#5b8c5a !important;color:#fff !important;border-color:#5b8c5a !important}
+.pill:hover{border-color:#7ab87a;color:#5b8c5a}
+.source-tab{background:#fff;color:#5b8c5a;border:1px solid #5b8c5a}
+.source-tab.active{background:#5b8c5a !important;color:#fff !important;border-color:#5b8c5a !important}
+.source-tab.active .tab-count{background:rgba(255,255,255,0.2)}
+.source-tab:hover:not(.active){background:#f0f9f0}
+.status-btn.current{font-weight:700;border-color:currentColor}
+.act-lib:hover{background:#1565c0;color:#fff}
+.act-books:hover{background:#f57f17;color:#fff}
+.act-momo:hover{background:#c62828;color:#fff}
+.act-eslite:hover{background:#2e7d32;color:#fff}
+.act-pchome:hover{background:#00695c;color:#fff}
+.act-yt:hover{background:#d32f2f;color:#fff}
+.act-shopee:hover{background:#ee4d2d;color:#fff}
+.act-threads:hover{background:#5a4fcf;color:#fff}
 </style>
 </head>
-<body>
+<body class="bg-cream text-stone-800 leading-relaxed font-sans">
 
-<div class="header">
-  <h1>嬰幼兒好書快速查詢</h1>
-  <p id="subtitle">教育部 / 國立臺灣圖書館 嬰幼兒閱讀推廣計畫 — 歷年入選好書 848 本</p>
+<div class="bg-gradient-to-br from-matcha to-matcha-light text-white text-center py-8 px-4 pb-6 rounded-b-2xl shadow-md">
+  <h1 class="text-2xl md:text-3xl font-bold tracking-wide mb-1">嬰幼兒好書快速查詢</h1>
+  <p id="subtitle" class="text-white/80 text-sm">教育部 / 國立臺灣圖書館 嬰幼兒閱讀推廣計畫 — 歷年入選好書 848 本</p>
 </div>
 
-<div class="source-tabs">
-  <button class="source-tab active" data-source="pccr">教育部好書 <span class="tab-count">848</span></button>
-  <button class="source-tab" data-source="threads">社群推薦 <span class="tab-count">84</span></button>
-  <button class="source-tab" data-source="favorites" id="favTab">我的收藏 <span class="tab-count">0</span></button>
+<div class="source-tabs flex justify-center gap-2 max-w-[1200px] mx-auto mt-4 px-2">
+  <button class="source-tab active rounded-full px-5 py-2 text-sm font-semibold transition-all duration-200 cursor-pointer bg-matcha text-white" data-source="pccr">教育部好書 <span class="tab-count text-xs bg-white/20 px-2 py-0.5 rounded-full ml-1">848</span></button>
+  <button class="source-tab rounded-full px-5 py-2 text-sm font-semibold transition-all duration-200 cursor-pointer bg-white text-matcha border border-matcha" data-source="threads">社群推薦 <span class="tab-count text-xs bg-matcha/10 px-2 py-0.5 rounded-full ml-1">84</span></button>
+  <button class="source-tab rounded-full px-5 py-2 text-sm font-semibold transition-all duration-200 cursor-pointer bg-white text-matcha border border-matcha" data-source="favorites" id="favTab">我的收藏 <span class="tab-count text-xs bg-matcha/10 px-2 py-0.5 rounded-full ml-1">0</span></button>
 </div>
 
-<div class="container">
-  <div class="search-area">
-    <input type="text" class="search-box" id="searchBox" placeholder="搜尋書名、作者、出版社..." autocomplete="off">
-    <div class="filters" id="pccrFilters">
-      <div class="filter-group">
-        <label>適讀年齡</label>
-        <div class="filter-pills" id="ageFilter">
-          <span class="pill active" data-val="">全部</span>
-          <span class="pill" data-val="0~3">0~3歲</span>
-          <span class="pill" data-val="3~5">3~5歲</span>
+<div class="max-w-[1200px] mx-auto px-4">
+  <div class="bg-white rounded-2xl p-5 mt-4 shadow-sm">
+    <input type="text" class="search-box w-full py-3 px-4 text-base border-2 border-sand rounded-xl outline-none transition-colors duration-200 focus:border-matcha placeholder:text-stone-300" id="searchBox" placeholder="搜尋書名、作者、出版社..." autocomplete="off">
+    <div class="filters flex flex-wrap gap-4 mt-4 items-end max-md:flex-col" id="pccrFilters">
+      <div class="filter-group flex flex-col gap-1 min-w-[120px] max-md:w-full">
+        <label class="text-xs text-stone-400 font-semibold uppercase tracking-wide">適讀年齡</label>
+        <div class="filter-pills flex flex-wrap gap-1.5" id="ageFilter">
+          <span class="pill active inline-block px-3 py-1 rounded-full text-sm cursor-pointer border border-sand bg-white text-stone-500 transition-all duration-150 select-none" data-val="">全部</span>
+          <span class="pill inline-block px-3 py-1 rounded-full text-sm cursor-pointer border border-sand bg-white text-stone-500 transition-all duration-150 select-none" data-val="0~3">0~3歲</span>
+          <span class="pill inline-block px-3 py-1 rounded-full text-sm cursor-pointer border border-sand bg-white text-stone-500 transition-all duration-150 select-none" data-val="3~5">3~5歲</span>
         </div>
       </div>
-      <div class="filter-group">
-        <label>推薦年度</label>
-        <select id="yearFilter">
+      <div class="filter-group flex flex-col gap-1 min-w-[120px] max-md:w-full">
+        <label class="text-xs text-stone-400 font-semibold uppercase tracking-wide">推薦年度</label>
+        <select id="yearFilter" class="py-2 px-3 border border-sand rounded-lg text-sm bg-white text-stone-600 cursor-pointer outline-none focus:border-matcha max-md:w-full">
           <option value="">全部年度</option>
           <option value="114">民國 114 年</option>
 <option value="113">民國 113 年</option>
@@ -147,9 +89,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans
 <option value="98">民國 98 年</option>
         </select>
       </div>
-      <div class="filter-group">
-        <label>屬性分類</label>
-        <select id="catFilter">
+      <div class="filter-group flex flex-col gap-1 min-w-[120px] max-md:w-full">
+        <label class="text-xs text-stone-400 font-semibold uppercase tracking-wide">屬性分類</label>
+        <select id="catFilter" class="py-2 px-3 border border-sand rounded-lg text-sm bg-white text-stone-600 cursor-pointer outline-none focus:border-matcha max-md:w-full">
           <option value="">全部分類</option>
           <option value="認知探索">認知探索</option>
           <option value="社會情緒">社會情緒</option>
@@ -160,34 +102,34 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans
           <option value="健康與安全">健康與安全</option>
         </select>
       </div>
-      <div class="filter-group">
-        <label>來源</label>
-        <div class="filter-pills" id="originFilter">
-          <span class="pill active" data-val="">全部</span>
-          <span class="pill" data-val="local">本土</span>
-          <span class="pill" data-val="foreign">翻譯</span>
+      <div class="filter-group flex flex-col gap-1 min-w-[120px] max-md:w-full">
+        <label class="text-xs text-stone-400 font-semibold uppercase tracking-wide">來源</label>
+        <div class="filter-pills flex flex-wrap gap-1.5" id="originFilter">
+          <span class="pill active inline-block px-3 py-1 rounded-full text-sm cursor-pointer border border-sand bg-white text-stone-500 transition-all duration-150 select-none" data-val="">全部</span>
+          <span class="pill inline-block px-3 py-1 rounded-full text-sm cursor-pointer border border-sand bg-white text-stone-500 transition-all duration-150 select-none" data-val="local">本土</span>
+          <span class="pill inline-block px-3 py-1 rounded-full text-sm cursor-pointer border border-sand bg-white text-stone-500 transition-all duration-150 select-none" data-val="foreign">翻譯</span>
         </div>
       </div>
-      <div class="filter-group">
-        <label>特殊</label>
-        <div class="filter-pills" id="classicFilter">
-          <span class="pill" data-val="classic">經典好書</span>
+      <div class="filter-group flex flex-col gap-1 min-w-[120px] max-md:w-full">
+        <label class="text-xs text-stone-400 font-semibold uppercase tracking-wide">特殊</label>
+        <div class="filter-pills flex flex-wrap gap-1.5" id="classicFilter">
+          <span class="pill inline-block px-3 py-1 rounded-full text-sm cursor-pointer border border-sand bg-white text-stone-500 transition-all duration-150 select-none" data-val="classic">經典好書</span>
         </div>
       </div>
     </div>
-    <div class="filters" id="threadsFilters" style="display:none">
-      <div class="filter-group">
-        <label>適讀年齡</label>
-        <div class="filter-pills" id="threadsAgeFilter">
-          <span class="pill active" data-val="">全部</span>
-          <span class="pill" data-val="0~3">0~3歲</span>
-          <span class="pill" data-val="3~4">3~4歲</span>
-          <span class="pill" data-val="5~6">5~6歲</span>
+    <div class="filters flex flex-wrap gap-4 mt-4 items-end max-md:flex-col" id="threadsFilters" style="display:none">
+      <div class="filter-group flex flex-col gap-1 min-w-[120px] max-md:w-full">
+        <label class="text-xs text-stone-400 font-semibold uppercase tracking-wide">適讀年齡</label>
+        <div class="filter-pills flex flex-wrap gap-1.5" id="threadsAgeFilter">
+          <span class="pill active inline-block px-3 py-1 rounded-full text-sm cursor-pointer border border-sand bg-white text-stone-500 transition-all duration-150 select-none" data-val="">全部</span>
+          <span class="pill inline-block px-3 py-1 rounded-full text-sm cursor-pointer border border-sand bg-white text-stone-500 transition-all duration-150 select-none" data-val="0~3">0~3歲</span>
+          <span class="pill inline-block px-3 py-1 rounded-full text-sm cursor-pointer border border-sand bg-white text-stone-500 transition-all duration-150 select-none" data-val="3~4">3~4歲</span>
+          <span class="pill inline-block px-3 py-1 rounded-full text-sm cursor-pointer border border-sand bg-white text-stone-500 transition-all duration-150 select-none" data-val="5~6">5~6歲</span>
         </div>
       </div>
-      <div class="filter-group">
-        <label>分類</label>
-        <select id="threadsCatFilter">
+      <div class="filter-group flex flex-col gap-1 min-w-[120px] max-md:w-full">
+        <label class="text-xs text-stone-400 font-semibold uppercase tracking-wide">分類</label>
+        <select id="threadsCatFilter" class="py-2 px-3 border border-sand rounded-lg text-sm bg-white text-stone-600 cursor-pointer outline-none focus:border-matcha max-md:w-full">
           <option value="">全部分類</option>
           <option value="繪本故事">繪本故事</option>
           <option value="英文">英文</option>
@@ -202,30 +144,30 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans
         </select>
       </div>
     </div>
-    <div class="filters" id="favFilters" style="display:none">
-      <div class="filter-group">
-        <label>閱讀狀態</label>
-        <div class="filter-pills" id="favStatusFilter">
-          <span class="pill active" data-val="">全部</span>
-          <span class="pill" data-val="want">想看</span>
-          <span class="pill" data-val="owned">已入手</span>
-          <span class="pill" data-val="done">讀完</span>
+    <div class="filters flex flex-wrap gap-4 mt-4 items-end max-md:flex-col" id="favFilters" style="display:none">
+      <div class="filter-group flex flex-col gap-1 min-w-[120px] max-md:w-full">
+        <label class="text-xs text-stone-400 font-semibold uppercase tracking-wide">閱讀狀態</label>
+        <div class="filter-pills flex flex-wrap gap-1.5" id="favStatusFilter">
+          <span class="pill active inline-block px-3 py-1 rounded-full text-sm cursor-pointer border border-sand bg-white text-stone-500 transition-all duration-150 select-none" data-val="">全部</span>
+          <span class="pill inline-block px-3 py-1 rounded-full text-sm cursor-pointer border border-sand bg-white text-stone-500 transition-all duration-150 select-none" data-val="want">想看</span>
+          <span class="pill inline-block px-3 py-1 rounded-full text-sm cursor-pointer border border-sand bg-white text-stone-500 transition-all duration-150 select-none" data-val="owned">已入手</span>
+          <span class="pill inline-block px-3 py-1 rounded-full text-sm cursor-pointer border border-sand bg-white text-stone-500 transition-all duration-150 select-none" data-val="done">讀完</span>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="stats">
-    <div class="count">符合 <strong id="resultCount">848</strong> 本</div>
-    <button class="reset-btn" id="resetBtn">清除篩選</button>
+  <div class="flex justify-between items-center my-4 max-w-[1200px] mx-auto px-1">
+    <div class="text-sm text-stone-400">符合 <strong id="resultCount" class="text-matcha text-lg">848</strong> 本</div>
+    <button class="bg-transparent border border-stone-300 rounded-lg px-3 py-1 text-xs cursor-pointer text-stone-400 transition-all duration-150 hover:border-matcha hover:text-matcha" id="resetBtn">清除篩選</button>
   </div>
 
-  <div class="book-list" id="bookList"></div>
+  <div class="book-list grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-[1200px] mx-auto pb-8" id="bookList"></div>
 </div>
 
-<div class="footer">
-  資料來源：<a href="https://www.pccr.tw/" target="_blank" rel="noopener">教育部 / 國立臺灣圖書館 嬰幼兒閱讀推廣計畫 (pccr.tw)</a>
-  ｜ <a href="https://www.threads.com/@kl__2024" target="_blank" rel="noopener">Threads 社群推薦</a><br>
+<div class="bg-matcha text-green-100 text-center py-6 px-4 mt-8 text-sm leading-loose">
+  資料來源：<a href="https://www.pccr.tw/" target="_blank" rel="noopener" class="text-green-200 no-underline hover:underline">教育部 / 國立臺灣圖書館 嬰幼兒閱讀推廣計畫 (pccr.tw)</a>
+  ｜ <a href="https://www.threads.com/@kl__2024" target="_blank" rel="noopener" class="text-green-200 no-underline hover:underline">Threads 社群推薦</a><br>
   本站僅供快速查詢使用，書目資料著作權歸原機關所有
 </div>
 
@@ -250,14 +192,15 @@ function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').
 function links(b){
   const isbn=b.isbn;
   const name=b.n;
+  const base='inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold no-underline transition-all duration-150 border';
   let html='';
-  if(isbn)html+=`<a class="act act-lib" href="https://cis2.ntl.edu.tw/search/?query_term=${enc(isbn)}&query_field=issn_isbn" target="_blank" rel="noopener">圖書館借閱</a>`;
-  if(isbn)html+=`<a class="act act-books" href="https://search.books.com.tw/search/query/key/${enc(isbn)}" target="_blank" rel="noopener">博客來</a>`;
-  html+=`<a class="act act-momo" href="https://www.momoshop.com.tw/search/searchShop.jsp?keyword=${enc(name)}" target="_blank" rel="noopener">momo</a>`;
-  html+=`<a class="act act-eslite" href="https://www.eslite.com/Search?keyword=${enc(name)}" target="_blank" rel="noopener">誠品</a>`;
-  html+=`<a class="act act-pchome" href="https://ecshweb.pchome.com.tw/search/v4.3/?q=${enc(name)}" target="_blank" rel="noopener">PChome</a>`;
-  html+=`<a class="act act-yt" href="https://www.youtube.com/results?search_query=${enc(name+' 繪本 共讀')}" target="_blank" rel="noopener">YouTube</a>`;
-  html+=`<a class="act act-shopee" href="https://shopee.tw/search?keyword=${enc(name)}" target="_blank" rel="noopener">蝦皮</a>`;
+  if(isbn)html+=`<a class="${base} act-lib bg-blue-50 text-blue-700 border-blue-200" href="https://cis2.ntl.edu.tw/search/?query_term=${enc(isbn)}&query_field=issn_isbn" target="_blank" rel="noopener">圖書館借閱</a>`;
+  if(isbn)html+=`<a class="${base} act-books bg-amber-50 text-amber-700 border-amber-200" href="https://search.books.com.tw/search/query/key/${enc(isbn)}" target="_blank" rel="noopener">博客來</a>`;
+  html+=`<a class="${base} act-momo bg-red-50 text-red-700 border-red-200" href="https://www.momoshop.com.tw/search/searchShop.jsp?keyword=${enc(name)}" target="_blank" rel="noopener">momo</a>`;
+  html+=`<a class="${base} act-eslite bg-green-50 text-green-700 border-green-200" href="https://www.eslite.com/Search?keyword=${enc(name)}" target="_blank" rel="noopener">誠品</a>`;
+  html+=`<a class="${base} act-pchome bg-teal-50 text-teal-700 border-teal-200" href="https://ecshweb.pchome.com.tw/search/v4.3/?q=${enc(name)}" target="_blank" rel="noopener">PChome</a>`;
+  html+=`<a class="${base} act-yt bg-red-50 text-red-600 border-red-200" href="https://www.youtube.com/results?search_query=${enc(name+' 繪本 共讀')}" target="_blank" rel="noopener">YouTube</a>`;
+  html+=`<a class="${base} act-shopee bg-orange-50 text-orange-600 border-orange-200" href="https://shopee.tw/search?keyword=${enc(name)}" target="_blank" rel="noopener">蝦皮</a>`;
   return html;
 }
 
@@ -360,100 +303,101 @@ function matchBook(b){
 
 function renderPccrCard(b){
   const tags=[];
-  tags.push(`<span class="tag tag-age">${esc(b.ag)}歲</span>`);
-  if(b.y.length)tags.push(`<span class="tag tag-year">${b.y.map(esc).join('/')}年</span>`);
-  if(b.cl)tags.push('<span class="tag tag-classic">經典</span>');
-  if(b.lo)tags.push('<span class="tag tag-local">本土</span>');
-  if(b.c)b.c.split('、').forEach(c=>{if(c.trim())tags.push(`<span class="tag tag-cat">${esc(c.trim())}</span>`)});
+  tags.push(`<span class="inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700">${esc(b.ag)}歲</span>`);
+  if(b.y.length)tags.push(`<span class="inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-purple-50 text-purple-700">${b.y.map(esc).join('/')}年</span>`);
+  if(b.cl)tags.push('<span class="inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700">經典</span>');
+  if(b.lo)tags.push('<span class="inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-red-50 text-red-700">本土</span>');
+  if(b.c)b.c.split('、').forEach(c=>{if(c.trim())tags.push(`<span class="inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-stone-100 text-stone-600">${esc(c.trim())}</span>`)});
 
   const titleHtml=b.id
-    ?`<a href="${PCCR}${enc(b.id)}" target="_blank" rel="noopener">${esc(b.n)}</a>`
+    ?`<a href="${PCCR}${enc(b.id)}" target="_blank" rel="noopener" class="text-stone-800 no-underline hover:text-matcha hover:underline transition-colors duration-150">${esc(b.n)}</a>`
     :esc(b.n);
 
-  let meta=`<span><span class="label">作者</span>${esc(b.a)}</span>`;
-  if(b.d&&b.d!==b.a)meta+=` <span><span class="label">繪者</span>${esc(b.d)}</span>`;
-  if(b.t)meta+=` <span><span class="label">譯者</span>${esc(b.t)}</span>`;
-  meta+=`<br><span><span class="label">出版</span>${esc(b.p)}</span>`;
-  if(b.dt)meta+=` <span><span class="label">日期</span>${esc(b.dt)}</span>`;
-  if(b.pr)meta+=` <span><span class="label">定價</span>${esc(b.pr)}元</span>`;
-  if(b.isbn)meta+=` <span><span class="label">ISBN</span>${esc(b.isbn)}</span>`;
+  let meta=`<span class="inline-block"><span class="text-stone-400 mr-0.5">作者</span>${esc(b.a)}</span>`;
+  if(b.d&&b.d!==b.a)meta+=` <span class="inline-block"><span class="text-stone-400 mr-0.5">繪者</span>${esc(b.d)}</span>`;
+  if(b.t)meta+=` <span class="inline-block"><span class="text-stone-400 mr-0.5">譯者</span>${esc(b.t)}</span>`;
+  meta+=`<br><span class="inline-block"><span class="text-stone-400 mr-0.5">出版</span>${esc(b.p)}</span>`;
+  if(b.dt)meta+=` <span class="inline-block"><span class="text-stone-400 mr-0.5">日期</span>${esc(b.dt)}</span>`;
+  if(b.pr)meta+=` <span class="inline-block"><span class="text-stone-400 mr-0.5">定價</span>${esc(b.pr)}元</span>`;
+  if(b.isbn)meta+=` <span class="inline-block"><span class="text-stone-400 mr-0.5">ISBN</span>${esc(b.isbn)}</span>`;
 
   let desc='';
-  if(b.desc)desc=`<div class="desc">${esc(b.desc)}</div>`;
+  if(b.desc)desc=`<div class="text-xs text-stone-400 mt-2 border-t border-sand pt-2 leading-relaxed">${esc(b.desc)}</div>`;
 
-  return `<div class="book-card${b.cl?' classic':''}">
+  return `<div class="bg-white rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow duration-200 flex flex-col relative">
     ${starHtml(b.n,'pccr')}
-    <div class="title">${titleHtml}</div>
+    <div class="text-base font-bold mb-1">${titleHtml}</div>
 
-    <div class="tags">${tags.join('')}</div>
-    <div class="meta">${meta}</div>
+    <div class="flex flex-wrap gap-1.5 mb-2">${tags.join('')}</div>
+    <div class="text-sm text-stone-500 leading-loose">${meta}</div>
     ${desc}
-    <div class="actions">${links(b)}</div>
+    <div class="flex flex-wrap gap-1.5 mt-auto pt-3 border-t border-sand">${links(b)}</div>
   </div>`;
 }
 
 function renderThreadsCard(b){
   const tags=[];
-  tags.push(`<span class="tag tag-age">${esc(b.ag)}歲</span>`);
-  tags.push(`<span class="tag tag-cat">${esc(b.cat)}</span>`);
+  tags.push(`<span class="inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700">${esc(b.ag)}歲</span>`);
+  tags.push(`<span class="inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-stone-100 text-stone-600">${esc(b.cat)}</span>`);
 
   let meta='';
-  if(b.a)meta+=`<span><span class="label">作者／出版</span>${esc(b.a)}</span>`;
-  if(b.note)meta+=(meta?' ':'')+ `<span><span class="label">備註</span>${esc(b.note)}</span>`;
+  if(b.a)meta+=`<span class="inline-block"><span class="text-stone-400 mr-0.5">作者／出版</span>${esc(b.a)}</span>`;
+  if(b.note)meta+=(meta?' ':'')+ `<span class="inline-block"><span class="text-stone-400 mr-0.5">備註</span>${esc(b.note)}</span>`;
 
   let actions='';
-  if(b.url&&b.url.startsWith('https://'))actions+=`<a class="act act-threads" href="${esc(b.url)}" target="_blank" rel="noopener">Threads 原文</a>`;
-  actions+=`<a class="act act-momo" href="https://www.momoshop.com.tw/search/searchShop.jsp?keyword=${enc(b.n)}" target="_blank" rel="noopener">momo</a>`;
-  actions+=`<a class="act act-eslite" href="https://www.eslite.com/Search?keyword=${enc(b.n)}" target="_blank" rel="noopener">誠品</a>`;
-  actions+=`<a class="act act-books" href="https://search.books.com.tw/search/query/key/${enc(b.n)}" target="_blank" rel="noopener">博客來</a>`;
-  actions+=`<a class="act act-yt" href="https://www.youtube.com/results?search_query=${enc(b.n+' 繪本 共讀')}" target="_blank" rel="noopener">YouTube</a>`;
-  actions+=`<a class="act act-shopee" href="https://shopee.tw/search?keyword=${enc(b.n)}" target="_blank" rel="noopener">蝦皮</a>`;
+  const ab='inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold no-underline transition-all duration-150 border';
+  if(b.url&&b.url.startsWith('https://'))actions+=`<a class="${ab} act-threads bg-purple-50 text-purple-700 border-purple-200" href="${esc(b.url)}" target="_blank" rel="noopener">Threads 原文</a>`;
+  actions+=`<a class="${ab} act-momo bg-red-50 text-red-700 border-red-200" href="https://www.momoshop.com.tw/search/searchShop.jsp?keyword=${enc(b.n)}" target="_blank" rel="noopener">momo</a>`;
+  actions+=`<a class="${ab} act-eslite bg-green-50 text-green-700 border-green-200" href="https://www.eslite.com/Search?keyword=${enc(b.n)}" target="_blank" rel="noopener">誠品</a>`;
+  actions+=`<a class="${ab} act-books bg-amber-50 text-amber-700 border-amber-200" href="https://search.books.com.tw/search/query/key/${enc(b.n)}" target="_blank" rel="noopener">博客來</a>`;
+  actions+=`<a class="${ab} act-yt bg-red-50 text-red-600 border-red-200" href="https://www.youtube.com/results?search_query=${enc(b.n+' 繪本 共讀')}" target="_blank" rel="noopener">YouTube</a>`;
+  actions+=`<a class="${ab} act-shopee bg-orange-50 text-orange-600 border-orange-200" href="https://shopee.tw/search?keyword=${enc(b.n)}" target="_blank" rel="noopener">蝦皮</a>`;
 
-  return `<div class="book-card threads-src">
+  return `<div class="bg-white rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow duration-200 flex flex-col relative">
     ${starHtml(b.n,'threads')}
-    <div class="title">${esc(b.n)}</div>
-    <div class="tags">${tags.join('')}</div>
-    ${meta?`<div class="meta">${meta}</div>`:''}
-    <div class="actions">${actions}</div>
+    <div class="text-base font-bold mb-1">${esc(b.n)}</div>
+    <div class="flex flex-wrap gap-1.5 mb-2">${tags.join('')}</div>
+    ${meta?`<div class="text-sm text-stone-500 leading-loose">${meta}</div>`:''}
+    <div class="flex flex-wrap gap-1.5 mt-auto pt-3 border-t border-sand">${actions}</div>
   </div>`;
 }
 
 function renderFavCard(bookName,source,status){
   const b=findBookData(bookName,source);
   const statusLabels={want:'想看',owned:'已入手',done:'讀完'};
-  const statusClass={want:'tag-want',owned:'tag-owned',done:'tag-done'};
+  const statusTagClass={want:'bg-blue-50 text-blue-700',owned:'bg-orange-50 text-orange-700',done:'bg-emerald-50 text-emerald-700'};
+  const statusBtnClass={want:'bg-blue-50 text-blue-700',owned:'bg-orange-50 text-orange-700',done:'bg-emerald-50 text-emerald-700'};
 
   const tags=[];
-  if(b.ag)tags.push(`<span class="tag tag-age">${esc(b.ag)}歲</span>`);
-  tags.push(`<span class="tag ${statusClass[status]}">${statusLabels[status]}</span>`);
-  if(source==='threads'&&b.cat)tags.push(`<span class="tag tag-cat">${esc(b.cat)}</span>`);
+  if(b.ag)tags.push(`<span class="inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700">${esc(b.ag)}歲</span>`);
+  tags.push(`<span class="inline-block px-2 py-0.5 rounded-full text-xs font-semibold ${statusTagClass[status]}">${statusLabels[status]}</span>`);
+  if(source==='threads'&&b.cat)tags.push(`<span class="inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-stone-100 text-stone-600">${esc(b.cat)}</span>`);
 
   let meta='';
-  if(b.a)meta+=`<span><span class="label">作者</span>${esc(b.a)}</span>`;
-  if(b.p)meta+=` <span><span class="label">出版</span>${esc(b.p)}</span>`;
+  if(b.a)meta+=`<span class="inline-block"><span class="text-stone-400 mr-0.5">作者</span>${esc(b.a)}</span>`;
+  if(b.p)meta+=` <span class="inline-block"><span class="text-stone-400 mr-0.5">出版</span>${esc(b.p)}</span>`;
 
   const bn=esc(bookName);
-  const statusBtns=`<div class="status-btns">
-    <button class="status-btn${status==='want'?' current tag-want':''}" data-bn="${bn}" data-bs="${source}" data-st="want">想看</button>
-    <button class="status-btn${status==='owned'?' current tag-owned':''}" data-bn="${bn}" data-bs="${source}" data-st="owned">已入手</button>
-    <button class="status-btn${status==='done'?' current tag-done':''}" data-bn="${bn}" data-bs="${source}" data-st="done">讀完</button>
+  const statusBtns=`<div class="flex gap-1.5 mt-2">
+    <button class="status-btn px-2 py-1 rounded-lg text-xs cursor-pointer border border-stone-200 bg-white transition-all duration-150 hover:border-matcha${status==='want'?' current font-bold '+statusBtnClass['want']:''}" data-bn="${bn}" data-bs="${source}" data-st="want">想看</button>
+    <button class="status-btn px-2 py-1 rounded-lg text-xs cursor-pointer border border-stone-200 bg-white transition-all duration-150 hover:border-matcha${status==='owned'?' current font-bold '+statusBtnClass['owned']:''}" data-bn="${bn}" data-bs="${source}" data-st="owned">已入手</button>
+    <button class="status-btn px-2 py-1 rounded-lg text-xs cursor-pointer border border-stone-200 bg-white transition-all duration-150 hover:border-matcha${status==='done'?' current font-bold '+statusBtnClass['done']:''}" data-bn="${bn}" data-bs="${source}" data-st="done">讀完</button>
   </div>`;
 
   let actions='';
-  actions+=`<a class="act act-momo" href="https://www.momoshop.com.tw/search/searchShop.jsp?keyword=${enc(bookName)}" target="_blank" rel="noopener">momo</a>`;
-  actions+=`<a class="act act-eslite" href="https://www.eslite.com/Search?keyword=${enc(bookName)}" target="_blank" rel="noopener">誠品</a>`;
-  actions+=`<a class="act act-books" href="https://search.books.com.tw/search/query/key/${enc(bookName)}" target="_blank" rel="noopener">博客來</a>`;
-  actions+=`<a class="act act-shopee" href="https://shopee.tw/search?keyword=${enc(bookName)}" target="_blank" rel="noopener">蝦皮</a>`;
+  const ab='inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold no-underline transition-all duration-150 border';
+  actions+=`<a class="${ab} act-momo bg-red-50 text-red-700 border-red-200" href="https://www.momoshop.com.tw/search/searchShop.jsp?keyword=${enc(bookName)}" target="_blank" rel="noopener">momo</a>`;
+  actions+=`<a class="${ab} act-eslite bg-green-50 text-green-700 border-green-200" href="https://www.eslite.com/Search?keyword=${enc(bookName)}" target="_blank" rel="noopener">誠品</a>`;
+  actions+=`<a class="${ab} act-books bg-amber-50 text-amber-700 border-amber-200" href="https://search.books.com.tw/search/query/key/${enc(bookName)}" target="_blank" rel="noopener">博客來</a>`;
+  actions+=`<a class="${ab} act-shopee bg-orange-50 text-orange-600 border-orange-200" href="https://shopee.tw/search?keyword=${enc(bookName)}" target="_blank" rel="noopener">蝦皮</a>`;
 
-  const cardClass=source==='threads'?'book-card threads-src':'book-card';
-
-  return `<div class="${cardClass}">
+  return `<div class="bg-white rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow duration-200 flex flex-col relative">
     ${starHtml(bookName,source)}
-    <div class="title">${esc(b.n||bookName)}</div>
-    <div class="tags">${tags.join('')}</div>
-    ${meta?`<div class="meta">${meta}</div>`:''}
+    <div class="text-base font-bold mb-1">${esc(b.n||bookName)}</div>
+    <div class="flex flex-wrap gap-1.5 mb-2">${tags.join('')}</div>
+    ${meta?`<div class="text-sm text-stone-500 leading-loose">${meta}</div>`:''}
     ${statusBtns}
-    <div class="actions">${actions}</div>
+    <div class="flex flex-wrap gap-1.5 mt-auto pt-3 border-t border-sand">${actions}</div>
   </div>`;
 }
 
@@ -478,7 +422,7 @@ function render(){
     }
     resultCount.textContent=entries.length;
     if(entries.length===0){
-      bookList.innerHTML='<div class="no-result">沒有收藏的書籍</div>';
+      bookList.innerHTML='<div class="text-center py-12 px-4 text-stone-300 text-lg">沒有收藏的書籍</div>';
       return;
     }
     bookList.innerHTML=entries.map(e=>renderFavCard(e.bookName,e.source,e.status)).join('');
@@ -486,7 +430,7 @@ function render(){
     matched=getActiveBooks().filter(matchBook);
     resultCount.textContent=matched.length;
     if(matched.length===0){
-      bookList.innerHTML='<div class="no-result">沒有找到符合條件的書籍</div>';
+      bookList.innerHTML='<div class="text-center py-12 px-4 text-stone-300 text-lg">沒有找到符合條件的書籍</div>';
       return;
     }
     bookList.innerHTML=matched.map(renderCard).join('');
@@ -515,7 +459,7 @@ function toggleFav(bookName,source){
 function starHtml(bookName,source){
   const active=isFav(bookName,source)?'active':'';
   const icon=isFav(bookName,source)?'\u2605':'\u2606';
-  return `<button class="fav-star ${active}" data-fav-name="${esc(bookName)}" data-fav-source="${source}">${icon}</button>`;
+  return `<button class="fav-star absolute top-2 right-2 text-xl cursor-pointer ${active?'text-amber-500':'text-stone-300'} bg-transparent border-none p-1 leading-none transition-colors duration-150 ${active}" data-fav-name="${esc(bookName)}" data-fav-source="${source}">${icon}</button>`;
 }
 
 function findBookData(bookName,source){

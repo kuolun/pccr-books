@@ -425,7 +425,7 @@ function render(){
     let entries=Array.from(favCache.entries()).map(([k,status])=>{
       const i=k.lastIndexOf(':');
       return{bookName:k.slice(0,i),source:k.slice(i+1),status};
-    });
+    }).reverse();
     if(filters.search){
       const s=filters.search;
       entries=entries.filter(e=>e.bookName.toLowerCase().includes(s));

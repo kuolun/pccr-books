@@ -528,8 +528,7 @@ async function loginWithGoogle(){
   await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname}});
 }
 
-async function logout(){
-  try{await sb.auth.signOut({scope:'local'});}catch(e){dbg('signOut err:'+e.message);}
+function logout(){
   currentUser=null;
   favCache.clear();
   if(currentSource==='favorites'){
@@ -538,6 +537,7 @@ async function logout(){
   updateAuthUI();
   updateFavTab();
   render();
+  sb.auth.signOut({scope:'local'}).catch(()=>{});
 }
 
 function updateAuthUI(){

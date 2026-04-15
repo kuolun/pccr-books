@@ -156,6 +156,14 @@ tailwind.config = {
         </div>
       </div>
       <div class="filter-group flex flex-col gap-1 min-w-[120px] max-md:w-full">
+        <label class="text-xs text-stone-400 font-semibold uppercase tracking-wide">適讀年齡</label>
+        <div class="filter-pills flex flex-wrap gap-1.5" id="favAgeFilter">
+          <span class="pill active inline-block px-3 py-1 rounded-full text-sm cursor-pointer border border-sand bg-white text-stone-500 transition-all duration-150 select-none" data-val="">全部</span>
+          <span class="pill inline-block px-3 py-1 rounded-full text-sm cursor-pointer border border-sand bg-white text-stone-500 transition-all duration-150 select-none" data-val="0~3">0~3歲</span>
+          <span class="pill inline-block px-3 py-1 rounded-full text-sm cursor-pointer border border-sand bg-white text-stone-500 transition-all duration-150 select-none" data-val="3~5">3~5歲</span>
+        </div>
+      </div>
+      <div class="filter-group flex flex-col gap-1 min-w-[120px] max-md:w-full">
         <label class="text-xs text-stone-400 font-semibold uppercase tracking-wide">來源</label>
         <div class="filter-pills flex flex-wrap gap-1.5" id="favSourceFilter">
           <span class="pill active inline-block px-3 py-1 rounded-full text-sm cursor-pointer border border-sand bg-white text-stone-500 transition-all duration-150 select-none" data-val="">全部</span>
@@ -227,7 +235,7 @@ const threadsFiltersEl=document.getElementById('threadsFilters');
 let currentSource='pccr';
 function getActiveBooks(){return currentSource==='threads'?THREADS_BOOKS:BOOKS}
 
-let filters={search:'',age:'',year:'',cat:'',origin:'',classic:false,favStatus:'',favSource:''};
+let filters={search:'',age:'',year:'',cat:'',origin:'',classic:false,favStatus:'',favSource:'',favAge:''};
 
 function setupPills(containerId,filterKey){
   const container=document.getElementById(containerId);
@@ -251,6 +259,7 @@ setupPills('originFilter','origin');
 setupPills('classicFilter','classic');
 setupPills('threadsAgeFilter','age');
 setupPills('favStatusFilter','favStatus');
+setupPills('favAgeFilter','favAge');
 setupPills('favSourceFilter','favSource');
 
 searchBox.addEventListener('input',()=>{filters.search=searchBox.value.trim().toLowerCase();render()});
@@ -259,7 +268,7 @@ catFilter.addEventListener('change',()=>{filters.cat=catFilter.value;render()});
 threadsCatFilter.addEventListener('change',()=>{filters.cat=threadsCatFilter.value;render()});
 
 function resetFilters(){
-  filters={search:'',age:'',year:'',cat:'',origin:'',classic:false,favStatus:'',favSource:''};
+  filters={search:'',age:'',year:'',cat:'',origin:'',classic:false,favStatus:'',favSource:'',favAge:''};
   searchBox.value='';
   yearFilter.value='';
   catFilter.value='';
@@ -435,6 +444,9 @@ function render(){
     }
     if(filters.favSource){
       entries=entries.filter(e=>e.source===filters.favSource);
+    }
+    if(filters.favAge){
+      entries=entries.filter(e=>{const b=findBookData(e.bookName,e.source);return b.ag===filters.favAge;});
     }
     resultCount.textContent=entries.length;
     if(entries.length===0){

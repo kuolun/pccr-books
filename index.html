@@ -590,7 +590,8 @@ function withTimeout(promise,ms){
 }
 async function ensureSession(){
   const{data:{session}}=await sb.auth.getSession();
-  if(!session){
+  const expired=!session||(session.expires_at&&Date.now()/1000>=session.expires_at-60);
+  if(expired){
     const{data:{session:refreshed},error}=await sb.auth.refreshSession();
     if(error||!refreshed){
       currentUser=null;
@@ -600,6 +601,7 @@ async function ensureSession(){
       document.getElementById('loginPrompt').style.display='';
       return false;
     }
+    currentUser=refreshed.user;
   }
   return true;
 }
@@ -611,7 +613,7 @@ async function toggleFav(bookName,source,bookData){
   if(_toggling)return;
   _toggling=true;
   try{
-    if(!await withTimeout(ensureSession(),5000)){dbg('no valid session');return;}
+    if(!await withTimeout(ensureSession(),10000)){dbg('no valid session');return;}
     const key=bookName+':'+source;
     if(favCache.has(key)){
       const fav=favCache.get(key);

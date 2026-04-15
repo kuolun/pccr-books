@@ -102,7 +102,8 @@ function loadFavs() {
 }
 
 function saveFavs() {
-  localStorage.setItem(FAV_KEY, JSON.stringify(Object.fromEntries(favCache)));
+  try { localStorage.setItem(FAV_KEY, JSON.stringify(Object.fromEntries(favCache))); }
+  catch(e) { console.error('saveFavs failed:', e); }
 }
 
 let favCache = loadFavs();
@@ -119,6 +120,7 @@ function toggleFav(bookName, source) {
 function updateFavStatus(bookName, source, status) {
   favCache.set(bookName + ':' + source, status);
   saveFavs();
+  updateFavTab();
   render();
 }
 
@@ -143,9 +145,18 @@ function isFav(bookName, source) {
 - 星星圖示和 hover 效果
 - Event delegation 架構
 
+## Supabase 資料遷移
+
+現有 Supabase 用戶的收藏資料將無法自動遷移至 localStorage。
+
+- 目前使用量極低（測試階段），影響範圍可忽略
+- Supabase 資料庫不刪除，資料仍保留在 server 上
+- 不做自動遷移機制（投入產出比不划算）
+
 ## 已知限制
 
 - 資料只存在該瀏覽器的 localStorage，清除瀏覽器資料會丟失
 - 無痕模式下收藏不會保留
 - 不支援跨裝置同步
+- localStorage 寫入可能在空間不足或隱私模式下失敗（saveFavs 有 try/catch）
 - 這些限制已被接受，未來如有需求可加匯出功能

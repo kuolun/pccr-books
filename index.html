@@ -529,7 +529,7 @@ async function loginWithGoogle(){
 }
 
 async function logout(){
-  try{await withTimeout(sb.auth.signOut(),5000);}catch(e){console.error('signOut error:',e);dbg('logout err:'+e.message);}
+  try{await sb.auth.signOut({scope:'local'});}catch(e){dbg('signOut err:'+e.message);}
   currentUser=null;
   favCache.clear();
   if(currentSource==='favorites'){
